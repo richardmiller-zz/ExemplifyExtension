@@ -1,5 +1,5 @@
 
-    public function %method%()
+    public function %example_name%()
     {
         $this->%method%();
     }

@@ -7,6 +7,7 @@ use PhpSpec\Console\IO;
 use PhpSpec\CodeGenerator\TemplateRenderer;
 use PhpSpec\Util\Filesystem;
 use PhpSpec\Locator\ResourceInterface;
+use RMiller\Caser\Cased;
 
 /**
  * Generates class methods from a resource
@@ -59,9 +60,12 @@ class SpecificationMethodGenerator implements GeneratorInterface
     public function generate(ResourceInterface $resource, array $data = array())
     {
         $filepath  = $resource->getSpecFilename();
-        $method    = $data['method'];
+        $method    = Cased::fromCamelCase($data['method']);
 
-        $values = array('%method%' => $method);
+        $values = [
+            '%method%' => $method->asCamelCase(),
+            '%example_name%' => 'it_should_'.$method->asSnakeCase(),
+        ];
         if (!$content = $this->templates->render('method', $values)) {
             $content = $this->templates->renderString(
                 $this->getTemplate(), $values
@@ -74,7 +78,7 @@ class SpecificationMethodGenerator implements GeneratorInterface
 
         $this->io->writeln(sprintf(
             "\nExample for <info>Method <value>%s::%s()</value> has been created.</info>",
-            $resource->getSrcClassname(), $method
+            $resource->getSrcClassname(), $method->asCamelCase()
         ), 2);
     }
 

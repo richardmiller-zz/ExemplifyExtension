@@ -11,10 +11,10 @@
             "email": "mrrmiller46@gmail.com"
         }
     ],
-
     "require": {
         "php":             ">=5.4",
-        "phpspec/phpspec": "~2.0"
+        "phpspec/phpspec": "~2.0",
+        "rmiller/caser":   "dev-master"
     },
 
     "autoload": {
