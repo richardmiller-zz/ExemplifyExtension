@@ -8,10 +8,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * Command line command responsible to signal to generators we will need to
- * generate a new spec
- */
 class ExemplifyCommand extends Command
 {
     protected function configure()
@@ -23,7 +19,7 @@ class ExemplifyCommand extends Command
                     new InputArgument('method', InputArgument::REQUIRED, 'Method to describe'),
                 ))
             ->setDescription('Adds an example for a method')
-            ->addOption('confirm', null, InputOption::VALUE_NONE, 'Ask for confirmation before creating spec')
+            ->addOption('confirm', null, InputOption::VALUE_NONE, 'Ask for confirmation before creating example')
             ->setHelp(<<<EOF
 The <info>%command.name%</info> command creates an example for a method:
 
