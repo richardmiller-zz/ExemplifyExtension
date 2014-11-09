@@ -50,7 +50,7 @@ EOF
             return;
         }
 
-        $resource  = $container->get('locator.resource_manager')->createResource($classname);
+        $resource = $container->get('locator.resource_manager')->createResource($classname);
 
         $container->get('code_generator')->generate($resource, 'specification_method', array(
             'method'      => $method,

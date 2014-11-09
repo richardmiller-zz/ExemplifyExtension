@@ -57,29 +57,18 @@ class SpecificationMethodGenerator implements GeneratorInterface
      * @param ResourceInterface $resource
      * @param array             $data
      */
-    public function generate(ResourceInterface $resource, array $data = array())
+    public function generate(ResourceInterface $resource, array $data = [])
     {
-        $filepath  = $resource->getSpecFilename();
-        $method    = Cased::fromCamelCase($data['method']);
+        $method = Cased::fromCamelCase($data['method']);
+        $spec = $this->filesystem->getFileContents($resource->getSpecFilename());
 
-        $values = [
-            '%method%' => $method->asCamelCase(),
-            '%example_name%' => 'it_should_'.$method->asSnakeCase(),
-        ];
-        if (!$content = $this->templates->render('method', $values)) {
-            $content = $this->templates->renderString(
-                $this->getTemplate(), $values
-            );
+        if ($this->exampleAlreadyExists($spec, $method)) {
+            $this->informExampleAlreadyExists($resource, $method);
+
+            return;
         }
 
-        $code = $this->filesystem->getFileContents($filepath);
-        $code = preg_replace('/}[ \n]*$/', rtrim($content)."\n}\n", trim($code));
-        $this->filesystem->putFileContents($filepath, $code);
-
-        $this->io->writeln(sprintf(
-            "\nExample for <info>Method <value>%s::%s()</value> has been created.</info>",
-            $resource->getSrcClassname(), $method->asCamelCase()
-        ), 2);
+        $this->addExampleToSpec($resource, $spec, $method);
     }
 
     /**
@@ -96,5 +85,67 @@ class SpecificationMethodGenerator implements GeneratorInterface
     protected function getTemplate()
     {
         return file_get_contents(__DIR__.'/templates/specification_method.template');
+    }
+
+    /**
+     * @param $spec
+     * @param \RMiller\Caser\Cased $method
+     * @return bool
+     */
+    private function exampleAlreadyExists($spec, Cased $method)
+    {
+        if (strpos($spec, '$this->' . $method->asCamelCase() . '(') !== false) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $method
+     * @return string
+     */
+    private function renderContent(Cased $method)
+    {
+        return $this->templates->renderString($this->getTemplate(), [
+            '%method%' => $method->asCamelCase(),
+            '%example_name%' => 'it_should_' . $method->asSnakeCase(),
+        ]);
+    }
+
+    /**
+     * @param \PhpSpec\Locator\ResourceInterface $resource
+     * @param $method
+     * @param $spec
+     */
+    private function addExampleToSpec(ResourceInterface $resource, $spec, Cased $method)
+    {
+        $spec = preg_replace('/}[ \n]*$/', rtrim($this->renderContent($method)) . "\n}\n", trim($spec));
+        $this->filesystem->putFileContents($resource->getSpecFilename(), $spec);
+        $this->informExampleAdded($resource, $method);
+    }
+
+    /**
+     * @param ResourceInterface $resource
+     * @param $method
+     */
+    private function informExampleAdded(ResourceInterface $resource, Cased $method)
+    {
+        $this->io->writeln(sprintf(
+            "\nExample for <info>Method <value>%s::%s()</value> has been created.</info>",
+            $resource->getSrcClassname(), $method->asCamelCase()
+        ), 2);
+    }
+
+    /**
+     * @param ResourceInterface $resource
+     * @param $method
+     */
+    private function informExampleAlreadyExists(ResourceInterface $resource, Cased $method)
+    {
+        $this->io->writeln(sprintf(
+            "\nExample for <info>Method <value>%s::%s()</value> already exists.</info> Try the <info>phpspec run</info> command",
+            $resource->getSrcClassname(), $method->asCamelCase()
+        ), 2);
     }
 }

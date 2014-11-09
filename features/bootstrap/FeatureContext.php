@@ -100,4 +100,12 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->applicationTester = $this->createApplicationTester();
         $this->applicationTester->run(sprintf('exemplify --no-interaction %s %s', $class, $method));
     }
+
+    /**
+     * @Then /^(?:|I )should see "(?P<message>[^"]*)"$/
+     */
+    public function iShouldSee($message)
+    {
+        expect($this->applicationTester->getDisplay())->toMatch('/'.preg_quote($message, '/').'/sm');
+    }
 }
