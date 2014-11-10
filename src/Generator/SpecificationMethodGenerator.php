@@ -95,8 +95,18 @@ class SpecificationMethodGenerator implements GeneratorInterface
      */
     private function exampleAlreadyExists($spec, Cased $method)
     {
-        if (strpos($spec, '$this->' . $method->asCamelCase() . '(') !== false) {
-            return true;
+        $camelCaseMethod = $method->asCamelCase();
+
+        $methodStrings = [
+            '$this->' . $camelCaseMethod . '(',
+            '$this::' . $camelCaseMethod . '(',
+            '$this->beConstructedThrough(\'' . $camelCaseMethod . '\'',
+        ];
+
+        foreach ($methodStrings as $existingMethodString) {
+            if (strpos($spec, $existingMethodString) !== false) {
+                return true;
+            }
         }
 
         return false;
