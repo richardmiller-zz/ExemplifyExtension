@@ -1,2 +1,6 @@
+suites:
+  error_extension:
+    namespace: RMiller\ExemplifyExtension
+    psr4_prefix: RMiller\ExemplifyExtension
 extensions:
   - RMiller\ExemplifyExtension\ExemplifyExtension

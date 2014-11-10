@@ -78,3 +78,75 @@ Feature: Developer generates an example
 
       """
     And I should see "Example for Method CodeGeneration\MethodExample2\Markdown::toHtml() already exists. Try the phpspec run command"
+
+  Scenario: Generating an example of a named constructor
+    Given the spec file "spec/CodeGeneration/MethodExample3/MarkdownSpec.php" contains:
+      """
+      <?php
+
+      namespace spec\CodeGeneration\MethodExample3;
+
+      use PhpSpec\ObjectBehavior;
+      use Prophecy\Argument;
+
+      class MarkdownSpec extends ObjectBehavior
+      {
+      }
+
+      """
+    When I run phpspec exemplify to add the "fromMarkdown" method as a "named constructor" to "CodeGeneration/MethodExample3/Markdown"
+    Then the spec file "spec/CodeGeneration/MethodExample3/MarkdownSpec.php" should contain:
+      """
+      <?php
+
+      namespace spec\CodeGeneration\MethodExample3;
+
+      use PhpSpec\ObjectBehavior;
+      use Prophecy\Argument;
+
+      class MarkdownSpec extends ObjectBehavior
+      {
+
+          public function it_should_be_constructed_through_from_markdown()
+          {
+              $this->beConstructedThrough('fromMarkdown');
+          }
+      }
+
+      """
+
+  Scenario: Generating an example of a static method
+    Given the spec file "spec/CodeGeneration/MethodExample4/MarkdownSpec.php" contains:
+      """
+      <?php
+
+      namespace spec\CodeGeneration\MethodExample4;
+
+      use PhpSpec\ObjectBehavior;
+      use Prophecy\Argument;
+
+      class MarkdownSpec extends ObjectBehavior
+      {
+      }
+
+      """
+    When I run phpspec exemplify to add the "toHtml" method as a "static method" to "CodeGeneration/MethodExample4/Markdown"
+    Then the spec file "spec/CodeGeneration/MethodExample4/MarkdownSpec.php" should contain:
+      """
+      <?php
+
+      namespace spec\CodeGeneration\MethodExample4;
+
+      use PhpSpec\ObjectBehavior;
+      use Prophecy\Argument;
+
+      class MarkdownSpec extends ObjectBehavior
+      {
+
+          public function it_should_to_html()
+          {
+              $this::toHtml();
+          }
+      }
+
+      """

@@ -68,7 +68,7 @@ class SpecificationMethodGenerator implements GeneratorInterface
             return;
         }
 
-        $this->addExampleToSpec($resource, $spec, $method);
+        $this->addExampleToSpec($resource, $spec, $method, $data['type']);
     }
 
     /**
@@ -80,11 +80,12 @@ class SpecificationMethodGenerator implements GeneratorInterface
     }
 
     /**
+     * @param $type
      * @return string
      */
-    protected function getTemplate()
+    protected function getTemplate($type)
     {
-        return file_get_contents(__DIR__.'/templates/specification_method.template');
+        return file_get_contents(__DIR__.'/templates/'.$type.'.template');
     }
 
     /**
@@ -102,25 +103,28 @@ class SpecificationMethodGenerator implements GeneratorInterface
     }
 
     /**
-     * @param $method
+     * @param \RMiller\Caser\Cased $method
+     * @param $type
      * @return string
      */
-    private function renderContent(Cased $method)
+    private function renderContent(Cased $method, $type)
     {
-        return $this->templates->renderString($this->getTemplate(), [
+        return $this->templates->renderString($this->getTemplate($type), [
             '%method%' => $method->asCamelCase(),
             '%example_name%' => 'it_should_' . $method->asSnakeCase(),
+            '%constructor_example_name%' => 'it_should_be_constructed_through_' . $method->asSnakeCase(),
         ]);
     }
 
     /**
      * @param \PhpSpec\Locator\ResourceInterface $resource
-     * @param $method
      * @param $spec
+     * @param \RMiller\Caser\Cased $method
+     * @param $type
      */
-    private function addExampleToSpec(ResourceInterface $resource, $spec, Cased $method)
+    private function addExampleToSpec(ResourceInterface $resource, $spec, Cased $method, $type)
     {
-        $spec = preg_replace('/}[ \n]*$/', rtrim($this->renderContent($method)) . "\n}\n", trim($spec));
+        $spec = preg_replace('/}[ \n]*$/', rtrim($this->renderContent($method, $type)) . "\n}\n", trim($spec));
         $this->filesystem->putFileContents($resource->getSpecFilename(), $spec);
         $this->informExampleAdded($resource, $method);
     }

@@ -108,4 +108,16 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         expect($this->applicationTester->getDisplay())->toMatch('/'.preg_quote($message, '/').'/sm');
     }
+
+    /**
+     * @When I run phpspec exemplify to add the :method method as a :type to :class
+     */
+    public function iRunPhpspecExemplifyToAddTheMethodAsATo($method, $type, $class)
+    {
+        $formattedMethodTypes = ['instance method','named constructor', 'static method'];
+
+        $this->applicationTester = $this->createApplicationTester();
+        $this->applicationTester->putToInputStream(sprintf("%s\n", array_search($type, $formattedMethodTypes)));
+        $this->applicationTester->run(sprintf('exemplify %s %s', $class, $method), ['interactive' => true, 'decorated' => false]);
+    }
 }

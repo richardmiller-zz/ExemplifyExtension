@@ -50,11 +50,14 @@ EOF
             return;
         }
 
+        $dialog = $this->getHelper('dialog');
+
         $resource = $container->get('locator.resource_manager')->createResource($classname);
 
-        $container->get('code_generator')->generate($resource, 'specification_method', array(
-            'method'      => $method,
-        ));
+        $container->get('code_generator')->generate($resource, 'specification_method', [
+            'method' => $method,
+            'type' => $this->confirmMethodType($output, $dialog),
+        ]);
     }
 
     /**
@@ -77,5 +80,22 @@ EOF
         }
 
         return false;
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param $dialog
+     */
+    protected function confirmMethodType(OutputInterface $output, $dialog)
+    {
+        $formattedMethodTypes = ['instance method','named constructor', 'static method'];
+        $methodTypes = ['instance-method', 'named-constructor', 'static-method'];
+
+        return $methodTypes[$dialog->select(
+            $output,
+            'Please select the method type (defaults to instance method)',
+            $formattedMethodTypes,
+            0
+        )];
     }
 }
