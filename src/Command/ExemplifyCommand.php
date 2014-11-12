@@ -46,52 +46,45 @@ EOF
         $classname = $input->getArgument('class');
         $method = $input->getArgument('method');
 
-        if (!$this->confirm($input, $container, $classname, $method)) {
+        if (!$this->confirm($input, $classname, $method)) {
             return;
         }
-
-        $dialog = $this->getHelper('dialog');
 
         $resource = $container->get('locator.resource_manager')->createResource($classname);
 
         $container->get('code_generator')->generate($resource, 'specification_method', [
             'method' => $method,
-            'type' => $this->confirmMethodType($output, $dialog),
+            'type' => $this->confirmMethodType($output),
         ]);
     }
 
     /**
      * @param InputInterface $input
-     * @param $container
      * @param $classname
      * @param $method
      * @return bool
      */
-    private function confirm(InputInterface $input, $container, $classname, $method)
+    private function confirm(InputInterface $input, $classname, $method)
     {
         if (!$input->getOption('confirm')) {
             return true;
         }
 
         $question = sprintf('Do you want to generate an example for %s::%s? (Y/n)', $classname, $method);
+        $io = $this->getApplication()->getContainer()->get('console.io');
 
-        if ($container->get('console.io')->askConfirmation($question, true)) {
-            return true;
-        }
-
-        return false;
+        return $io->askConfirmation($question, true);
     }
 
     /**
      * @param OutputInterface $output
-     * @param $dialog
      */
-    protected function confirmMethodType(OutputInterface $output, $dialog)
+    private function confirmMethodType(OutputInterface $output)
     {
         $formattedMethodTypes = ['instance method','named constructor', 'static method'];
         $methodTypes = ['instance-method', 'named-constructor', 'static-method'];
 
-        return $methodTypes[$dialog->select(
+        return $methodTypes[$this->getHelper('dialog')->select(
             $output,
             'Please select the method type (defaults to instance method)',
             $formattedMethodTypes,
