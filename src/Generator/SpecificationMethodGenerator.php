@@ -89,7 +89,7 @@ class SpecificationMethodGenerator implements GeneratorInterface
     }
 
     /**
-     * @param $spec
+     * @param string $spec
      * @param \RMiller\Caser\Cased $method
      * @return bool
      */
@@ -128,7 +128,7 @@ class SpecificationMethodGenerator implements GeneratorInterface
 
     /**
      * @param \PhpSpec\Locator\ResourceInterface $resource
-     * @param $spec
+     * @param string $spec
      * @param \RMiller\Caser\Cased $method
      * @param $type
      */
