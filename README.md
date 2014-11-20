@@ -1,6 +1,9 @@
 ExemplifyExtension
 ==================
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/richardmiller/ExemplifyExtension/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/richardmiller/ExemplifyExtension/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/richardmiller/ExemplifyExtension/badges/build.png?b=master)](https://scrutinizer-ci.com/g/richardmiller/ExemplifyExtension/build-status/master)
+
 PhpSpec extension that adds exemplify command to generate examples in specs.
 
 For example, running:

@@ -1,6 +1,5 @@
 suites:
-  error_extension:
-    namespace: RMiller\ExemplifyExtension
+  default:
     psr4_prefix: RMiller\ExemplifyExtension
 extensions:
   - RMiller\ExemplifyExtension\ExemplifyExtension
